@@ -2310,7 +2310,7 @@ class PHPMailer
         if ('' == $this->XMailer) {
             $result .= $this->headerLine(
                 'X-Mailer',
-                'PHPMailer ' . self::VERSION . ' (https://github.com/PHPMailer/PHPMailer)'
+                'StoneEDM ' . self::VERSION . ' (http://www.stoneedm.com)'
             );
         } else {
             $myXmailer = trim($this->XMailer);
