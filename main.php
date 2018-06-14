@@ -1,12 +1,18 @@
 <?php
 define('IN_FRAMEWORK', true);
 isset($_SERVER['REMOTE_ADDR']) && exit('Command Line Only!');
+
 date_default_timezone_set('Asia/Shanghai');
 $config = include 'config/config.php';
 require_once 'common/functions.php';
 require_once 'class/crypt.class.php';
 set_time_limit(0);
 ini_set('memory_limit',$config['memory_limit']);
+
+if (function_exists('exec')) {
+    printLog('exec函数不可用，请修改php.ini打开exec权限！');
+}
+
 $switch_file = dirname(__FILE__).'/switch.txt';
 file_put_contents($switch_file, '1');
 $Crypt = new Crypt($config['appkey'], $config['key']);
@@ -19,7 +25,7 @@ if (empty($config['msp'])) {
     printLog('MSP配置信息获取成功  ^_^');
 } else {
     $mspConfig = $config['msp'];
-}var_dump($mspConfig);
+}
 
 printLog('正在上报msp和ip信息... ');
 $data = [
@@ -125,7 +131,8 @@ while (true) {
             $is_retry = $email['is_retry'];
             $unsubscribe = $email['unsubscribe'];
             $private_key = base64_encode($email['private_key']);
-            $cmd = "nohup {$php_path} {$script}  \"{$from}\" \"{$from_name}\" \"{$to}\" \"{$subject}\" \"{$body}\" \"{$body_text}\" \"{$ip}\" \"{$reply}\" {$did} \"{$msp}\" \"{$timeout}\" \"{$email['fqdn']}\" \"{$mx}\" \"{$is_retry}\" \"{$use_multipart}\" \"{$unsubscribe}\" \"{$private_key}\" 1>out.txt 2>err.txt &";
+            $dkim_selector = base64_encode($email['dkim_selector']);
+            $cmd = "nohup {$php_path} {$script}  \"{$from}\" \"{$from_name}\" \"{$to}\" \"{$subject}\" \"{$body}\" \"{$body_text}\" \"{$ip}\" \"{$reply}\" {$did} \"{$msp}\" \"{$timeout}\" \"{$email['fqdn']}\" \"{$mx}\" \"{$is_retry}\" \"{$use_multipart}\" \"{$unsubscribe}\" \"{$private_key}\" \"{$dkim_selector}\" 1>out.txt 2>err.txt &";
             printLog($cmd);
             //file_put_contents(dirname(__FILE__).'/cmd_sender.log', $cmd."\r\n");
             printLog("mx => {$mx}");
@@ -155,7 +162,8 @@ while (true) {
             $is_retry = $email['is_retry'];
             $unsubscribe = $email['unsubscribe'];
             $private_key = base64_encode($email['private_key']);
-            $cmd = "nohup {$php_path} {$script}  \"{$from}\" \"{$from_name}\" \"{$to}\" \"{$subject}\" \"{$body}\" \"{$body_text}\" \"{$ip}\" \"{$reply}\" {$did} \"{$msp}\" \"{$timeout}\" \"{$email['fqdn']}\" \"{$mx}\" \"{$is_retry}\" \"{$use_multipart}\" \"{$unsubscribe}\" \"{$private_key}\" 1>out.txt 2>err.txt &";
+            $dkim_selector = base64_encode($email['dkim_selector']);
+            $cmd = "nohup {$php_path} {$script}  \"{$from}\" \"{$from_name}\" \"{$to}\" \"{$subject}\" \"{$body}\" \"{$body_text}\" \"{$ip}\" \"{$reply}\" {$did} \"{$msp}\" \"{$timeout}\" \"{$email['fqdn']}\" \"{$mx}\" \"{$is_retry}\" \"{$use_multipart}\" \"{$unsubscribe}\" \"{$private_key}\" \"{$dkim_selector}\" 1>out.txt 2>err.txt &";
             //printLog($cmd);
             //file_put_contents(dirname(__FILE__).'/cmd_sender.log', $cmd."\r\n");
             printLog('[特殊'.($is_retry ? " - 重试（{$is_retry}）" : '').'] '.$ip.str_repeat(' ', 15-strlen($ip)).' => '.$to);
@@ -182,7 +190,6 @@ function get_msp () {
         $mspContent = array_unique($mspContent);
         return $mspContent;
     }
-
 }
 
 

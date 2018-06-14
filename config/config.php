@@ -9,10 +9,10 @@ return array(
     //edm上报msp实例接口
     'appkey' => '',  //
     'key' => '',
-    'report_api' => 'http://edm4.feng.com/api/send/report.html',
-    'task_api' => 'http://edm4.feng.com/api/task/index.html',
-    'msp_api' => 'http://edm4.feng.com/api/task/msp.html',
-    'feedback_api' => 'http://edm4.feng.com/api/feedback/index.html',
+    'report_api' => 'https://www.stoneedm.com/api/send/report.html',
+    'task_api' => 'https://www.stoneedm.com/api/task/index.html',
+    'msp_api' => 'https://www.stoneedm.com/api/task/msp.html',
+    'feedback_api' => 'https://www.stoneedm.com/api/feedback/index.html',
     //进程最大数，同时限制每次请求获得的邮件数量，如果配置为20，则理论获得最大邮件数为40，20个普通，20个ip分组邮件
     'max_send_num' => 20,
     'max_process' => 500,

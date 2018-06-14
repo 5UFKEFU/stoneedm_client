@@ -10,16 +10,16 @@ ini_set('memory_limit','128m');
 $Crypt = new Crypt($config['appkey'], $config['key']);
 
 $arg = $_SERVER['argv'];
-count($arg) != 18 && exit("使用方法：sender.php <from> <from_name> <to> <subject> <message> <message_text> <ip> <reply> <did> <msp> <timeout> <fqdn> <mx> <is_retry> <use_multipart>\r\n");
+count($arg) != 19 && exit("使用方法：sender.php <from> <from_name> <to> <subject> <message> <message_text> <ip> <reply> <did> <msp> <timeout> <fqdn> <mx> <is_retry> <use_multipart> <unsubscribe> <private_key> <dkim_selector>\r\n");
 
 echo "\r\n";
 printLog("------------------------------- 脚本初始化完成 ! -------------------------------");
 
-list($null, $from, $from_name, $to, $subject, $message, $message_text, $ip, $reply, $qid, $msp, $timeout, $fqdn, $mx, $is_retry, $use_multipart, $unsubscribe, $private_key) = $arg;
+list($null, $from, $from_name, $to, $subject, $message, $message_text, $ip, $reply, $qid, $msp, $timeout, $fqdn, $mx, $is_retry, $use_multipart, $unsubscribe, $private_key, $dkim_selector) = $arg;
 
 $dirname = dirname(__FILE__);
 $cmd = <<<EOF
-{$config['php_path']} {$dirname}/sender.php "{$from}" "{$from_name}" "{$to}" "{$subject}" "{$message}" "{$message_text}" "{$ip}" "{$reply}" "{$qid}" "{$msp}" "{$timeout}" "{$fqdn}" "{$mx}" "{$is_retry}" "{$use_multipart}" "{$unsubscribe}" "{$private_key}"
+{$config['php_path']} {$dirname}/sender.php "{$from}" "{$from_name}" "{$to}" "{$subject}" "{$message}" "{$message_text}" "{$ip}" "{$reply}" "{$qid}" "{$msp}" "{$timeout}" "{$fqdn}" "{$mx}" "{$is_retry}" "{$use_multipart}" "{$unsubscribe}" "{$private_key}" "{$dkim_selector}"
 EOF;
 
 
@@ -60,7 +60,7 @@ $mail->addCustomHeader('List-Unsubscribe', "<{$unsubscribe}>");
 if (!empty($private_key)) {
     $mail->DKIM_domain = get_email_domain($from);
     $mail->DKIM_private_string = $private_key;
-    $mail->DKIM_selector = 'mail';
+    $mail->DKIM_selector = $dkim_selector;
     $mail->DKIM_passphrase = '';
     $mail->DKIM_identity = $mail->From;
 }
